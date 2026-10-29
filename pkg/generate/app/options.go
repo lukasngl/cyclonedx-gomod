@@ -96,3 +96,15 @@ func WithShortPURLS(enable bool) Option {
 		return nil
 	}
 }
+
+// WithVersionOverride overrides the version of the main module.
+//
+// Per default, the version of the main module is detected using Git.
+// Overriding it is necessary when the module directory is not a Git repository,
+// or when the detected version is not desired.
+func WithVersionOverride(version string) Option {
+	return func(g *generator) error {
+		g.versionOverride = version
+		return nil
+	}
+}

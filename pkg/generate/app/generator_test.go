@@ -20,6 +20,7 @@ package app
 import (
 	"errors"
 	"os"
+	"path/filepath"
 	"runtime"
 	"testing"
 
@@ -128,6 +129,23 @@ func TestGenerator_Generate(t *testing.T) {
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOVERSION", `^go1\.`)
 		testutil.RequireStdlibComponentToBeRedacted(t, bom, true, false)
 		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatJSON)
+	})
+
+	t.Run("SimpleWithVersionOverride", func(t *testing.T) {
+		fixturePath := testutil.ExtractFixtureArchive(t, "../testdata/simple.tar.gz")
+		require.NoError(t, os.RemoveAll(filepath.Join(fixturePath, ".git")))
+
+		g, err := NewGenerator(fixturePath,
+			WithLogger(testutil.SilentLogger),
+			WithVersionOverride("v1.2.3"))
+		require.NoError(t, err)
+
+		bom, err := g.Generate()
+		require.NoError(t, err)
+
+		require.Equal(t, "v1.2.3", bom.Metadata.Component.Version)
+		require.Equal(t, "pkg:golang/testmod-simple@v1.2.3?type=module", bom.Metadata.Component.BOMRef)
+		require.Equal(t, bom.Metadata.Component.BOMRef, (*bom.Dependencies)[0].Ref)
 	})
 
 	t.Run("SimpleMultiCommandPURL", func(t *testing.T) {

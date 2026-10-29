@@ -109,6 +109,10 @@ for each target in the build matrix.
 The -main flag should be used to specify the path to the application's main package.
 It must point to a directory within MODULE_PATH. If not set, MODULE_PATH is assumed.
 
+The version of the main module is detected using Git. When MODULE_PATH is not
+a Git repository, or a different version is desired, it can be provided
+via the -version flag.
+
 In order to not only include modules, but also the packages within them,
 the -packages flag can be used. Packages are represented as subcomponents of modules.
 
@@ -149,6 +153,7 @@ FLAGS
   -short-purls=false                  Omit all qualifiers from PackageURLs
   -std=false                          Include Go standard library as component and dependency of the module
   -verbose=false                      Enable verbose output
+  -version string                     Version of the main component (overrides Git version detection)
 ```
 
 #### `bin`
@@ -403,6 +408,9 @@ For the main module and local [replacement modules](https://golang.org/ref/mod#g
 > For example, [actions/checkout@v2](https://github.com/actions/checkout/tree/v2.3.4#checkout-v2) clones repositories with `fetch-depth: 1` per default.
 
 At the moment, no VCS other than Git is supported. If you need support for another VCS, please open an issue or submit a PR.
+
+The `app` command allows the version of the main module to be provided via the `-version` flag instead,
+which is useful when building outside of a Git repository.
 
 ## Copyright & License
 

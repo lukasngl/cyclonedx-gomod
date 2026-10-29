@@ -64,6 +64,10 @@ for each target in the build matrix.
 The -main flag should be used to specify the path to the application's main package.
 It must point to a directory within MODULE_PATH. If not set, MODULE_PATH is assumed.
 
+The version of the main module is detected using Git. When MODULE_PATH is not
+a Git repository, or a different version is desired, it can be provided
+via the -version flag.
+
 In order to not only include modules, but also the packages within them,
 the -packages flag can be used. Packages are represented as subcomponents of modules.
 
@@ -122,7 +126,8 @@ func Exec(options Options) error {
 		app.WithIncludeStdlib(options.IncludeStd),
 		app.WithLicenseDetector(licenseDetector),
 		app.WithMainDir(options.Main),
-		app.WithShortPURLS(options.ShortPURLs))
+		app.WithShortPURLS(options.ShortPURLs),
+		app.WithVersionOverride(options.Version))
 	if err != nil {
 		return err
 	}
